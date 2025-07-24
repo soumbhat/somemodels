@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Furniture 3D Demo</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 0.2rem;
+      color: #1a73e8;
+    }
+
+    p.description {
+      font-size: 1.1rem;
+      margin: 0 0 2rem 0;
+      max-width: 600px;
+      color: #555;
+    }
+
+    .preview-image {
+      max-width: 90vw;
+      max-height: 350px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(26, 115, 232, 0.2);
+      object-fit: contain;
+      margin-bottom: 2rem;
+    }
+
+    button#ar-button {
+      background-color: #1a73e8;
+      border: none;
+      border-radius: 8px;
+      padding: 1rem 2.5rem;
+      font-size: 1.25rem;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(26, 115, 232, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button#ar-button:hover {
+      background-color: #155ab6;
+      box-shadow: 0 8px 20px rgba(21, 90, 182, 0.6);
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+      }
+      button#ar-button {
+        width: 100%;
+        font-size: 1.1rem;
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Furniture 3D Demo</h1>
+  <p class="description">
+    Explore a realistic 3D model of our latest furniture design. Tap the button below to view it in augmented reality using your phone’s camera.
+  </p>
+
+  <!-- 2D preview image -->
+  <img
+    src="https://raw.githubusercontent.com/soumbhat/somemodels/main/sofa-shoot.jpg"
+    alt="Furniture 2D Preview"
+    class="preview-image"
+  />
+
+  <button id="ar-button">View in AR</button>
+
+  <script>
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const arButton = document.getElementById('ar-button');
+
+    arButton.addEventListener('click', () => {
+      if (isIOS) {
+        // iOS uses Quick Look
+        window.location.href = "https://huggingface.co/datasets/soumbhat/Demo_furniture/resolve/main/texture_mesh_c59b717cae6ac53f_shaded%20(1).usdz";
+      } else {
+        // Android uses Scene Viewer
+        const modelUrl = encodeURIComponent('https://raw.githubusercontent.com/soumbhat/somemodels/main/texture_mesh_c59b717cae6ac53f_shaded.glb');
+        const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${modelUrl}&mode=ar_preferred#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https%3A%2F%2Fmodelviewer.dev%2F;end;`;
+        window.location.href = intentUrl;
+      }
+    });
+  </script>
+
+</body>
+</html>
