@@ -1,34 +1,44 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>3D Model Viewer</title>
-    <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
-    <style>
-      body {
-        margin: 0;
-        background: #000;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-      }
-      model-viewer {
-        width: 100vw;
-        height: 100vh;
-      }
-    </style>
-  </head>
-  <body>
-    <model-viewer
-      src="https://raw.githubusercontent.com/soumbhat/somemodels/main/texture_mesh_c59b717cae6ac53f_shaded.glb"
-      alt="3D model"
-      auto-rotate
-      camera-controls
-      ar
-      ar-modes="scene-viewer quick-look webxr"
-      shadow-intensity="1"
-      environment-image="neutral">
-    </model-viewer>
-  </body>
+<head>
+  <meta charset="UTF-8" />
+  <title>Open AR Model</title>
+  <style>
+    body {
+      display: flex;
+      height: 100vh;
+      justify-content: center;
+      align-items: center;
+      background: #000;
+      margin: 0;
+      color: white;
+      font-family: sans-serif;
+    }
+    button {
+      padding: 1em 2em;
+      font-size: 1.5em;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background-color: #1a73e8;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+
+<button id="ar-button">View in AR</button>
+
+<script>
+  const arButton = document.getElementById('ar-button');
+
+  arButton.addEventListener('click', () => {
+    const modelUrl = encodeURIComponent('https://raw.githubusercontent.com/soumbhat/somemodels/main/texture_mesh_c59b717cae6ac53f_shaded.glb');
+    const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${modelUrl}&mode=ar_preferred#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https%3A%2F%2Fmodelviewer.dev%2F;end;`;
+
+    window.location.href = intentUrl;
+  });
+</script>
+
+</body>
 </html>
