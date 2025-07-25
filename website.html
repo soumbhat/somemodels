@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Furniture 3D Demo</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: #f5f7fa;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      box-sizing: border-box;
+      text-align: center;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 2.5rem;
+      margin-bottom: 0.2rem;
+      color: #1a73e8;
+    }
+
+    p.description {
+      font-size: 1.1rem;
+      margin: 0 0 2rem 0;
+      max-width: 600px;
+      color: #555;
+    }
+
+    .image-wrapper {
+      position: relative;
+      max-width: 90vw;
+      margin-bottom: 2rem;
+    }
+
+    .preview-image {
+      width: 90vw;
+      max-height: 350px;
+      border-radius: 12px;
+      box-shadow: 0 4px 15px rgba(26, 115, 232, 0.2);
+      object-fit: contain;
+    }
+
+    .next-button {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #1a73e8;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 1.5rem;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(26, 115, 232, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .next-button:hover {
+      background-color: #155ab6;
+      box-shadow: 0 8px 20px rgba(21, 90, 182, 0.6);
+    }
+
+    button#ar-button {
+      background-color: #1a73e8;
+      border: none;
+      border-radius: 8px;
+      padding: 1rem 2.5rem;
+      font-size: 1.25rem;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(26, 115, 232, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    button#ar-button:hover {
+      background-color: #155ab6;
+      box-shadow: 0 8px 20px rgba(21, 90, 182, 0.6);
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 2rem;
+      }
+
+      .next-button {
+        width: 38px;
+        height: 38px;
+        font-size: 1.2rem;
+      }
+
+      button#ar-button {
+        width: 100%;
+        font-size: 1.1rem;
+        padding: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Furniture 3D Demo</h1>
+  <p class="description">
+    Explore realistic 3D models of our latest furniture designs. Tap the button below to switch models and view in augmented reality.
+  </p>
+
+  <!-- Image with next button -->
+  <div class="image-wrapper">
+    <img id="model-image" src="https://raw.githubusercontent.com/soumbhat/somemodels/main/sofa-shoot.jpg" alt="Furniture Preview" class="preview-image" />
+    <button class="next-button" id="next-btn">&#9654;</button>
+  </div>
+
+  <button id="ar-button">View in AR</button>
+
+  <script>
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const arButton = document.getElementById('ar-button');
+    const nextBtn = document.getElementById('next-btn');
+    const image = document.getElementById('model-image');
+
+    const models = [
+      {
+        name: "Sofa",
+        image: "https://raw.githubusercontent.com/soumbhat/somemodels/main/sofa-shoot.jpg",
+        glb: "https://raw.githubusercontent.com/soumbhat/somemodels/main/texture_mesh_c59b717cae6ac53f_shaded.glb",
+        usdz: "https://huggingface.co/datasets/soumbhat/Demo_furniture/resolve/main/texture_mesh_c59b717cae6ac53f_shaded%20(1).usdz"
+      },
+      {
+        name: "Bed",
+        image: "https://raw.githubusercontent.com/soumbhat/somemodels/main/bed.png",
+        glb: "https://raw.githubusercontent.com/soumbhat/somemodels/main/bed.glb",
+        usdz: "https://huggingface.co/datasets/soumbhat/Demo_furniture/resolve/main/bed.usdz"
+      }
+    ];
+
+    let currentIndex = 0;
+
+    function updateImage() {
+      image.src = models[currentIndex].image;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % models.length;
+      updateImage();
+    });
+
+    arButton.addEventListener('click', () => {
+      const model = models[currentIndex];
+      if (isIOS) {
+        window.location.href = model.usdz;
+      } else {
+        const encoded = encodeURIComponent(model.glb);
+        const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encoded}&mode=ar_preferred#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https%3A%2F%2Fmodelviewer.dev%2F;end;`;
+        window.location.href = intentUrl;
+      }
+    });
+  </script>
+
+</body>
+</html>
