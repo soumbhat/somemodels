@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Furniture 3D Demo</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
@@ -35,13 +36,40 @@
       color: #555;
     }
 
-    .preview-image {
+    .image-wrapper {
+      position: relative;
       max-width: 90vw;
+      margin-bottom: 2rem;
+    }
+
+    .preview-image {
+      width: 90vw;
       max-height: 350px;
       border-radius: 12px;
       box-shadow: 0 4px 15px rgba(26, 115, 232, 0.2);
       object-fit: contain;
-      margin-bottom: 2rem;
+    }
+
+    .next-button {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #1a73e8;
+      border: none;
+      border-radius: 50%;
+      width: 45px;
+      height: 45px;
+      font-size: 1.5rem;
+      color: white;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(26, 115, 232, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .next-button:hover {
+      background-color: #155ab6;
+      box-shadow: 0 8px 20px rgba(21, 90, 182, 0.6);
     }
 
     button#ar-button {
@@ -65,6 +93,13 @@
       h1 {
         font-size: 2rem;
       }
+
+      .next-button {
+        width: 38px;
+        height: 38px;
+        font-size: 1.2rem;
+      }
+
       button#ar-button {
         width: 100%;
         font-size: 1.1rem;
@@ -77,30 +112,56 @@
 
   <h1>Furniture 3D Demo</h1>
   <p class="description">
-    Explore a realistic 3D model of our latest furniture design. Tap the button below to view it in augmented reality using your phone’s camera.
+    Explore realistic 3D models of our latest furniture designs. Tap the button below to switch models and view in augmented reality.
   </p>
 
-  <!-- 2D preview image -->
-  <img
-    src="https://raw.githubusercontent.com/soumbhat/somemodels/main/sofa-shoot.jpg"
-    alt="Furniture 2D Preview"
-    class="preview-image"
-  />
+  <!-- Image with next button -->
+  <div class="image-wrapper">
+    <img id="model-image" src="https://raw.githubusercontent.com/soumbhat/somemodels/main/sofa-shoot.jpg" alt="Furniture Preview" class="preview-image" />
+    <button class="next-button" id="next-btn">&#9654;</button>
+  </div>
 
   <button id="ar-button">View in AR</button>
 
   <script>
     const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
     const arButton = document.getElementById('ar-button');
+    const nextBtn = document.getElementById('next-btn');
+    const image = document.getElementById('model-image');
+
+    const models = [
+      {
+        name: "Sofa",
+        image: "https://raw.githubusercontent.com/soumbhat/somemodels/main/sofa-shoot.jpg",
+        glb: "https://raw.githubusercontent.com/soumbhat/somemodels/main/texture_mesh_c59b717cae6ac53f_shaded.glb",
+        usdz: "https://huggingface.co/datasets/soumbhat/Demo_furniture/resolve/main/texture_mesh_c59b717cae6ac53f_shaded%20(1).usdz"
+      },
+      {
+        name: "Bed",
+        image: "https://raw.githubusercontent.com/soumbhat/somemodels/main/bed.png",
+        glb: "https://raw.githubusercontent.com/soumbhat/somemodels/main/bed.glb",
+        usdz: "https://huggingface.co/datasets/soumbhat/Demo_furniture/resolve/main/bed.usdz"
+      }
+    ];
+
+    let currentIndex = 0;
+
+    function updateImage() {
+      image.src = models[currentIndex].image;
+    }
+
+    nextBtn.addEventListener('click', () => {
+      currentIndex = (currentIndex + 1) % models.length;
+      updateImage();
+    });
 
     arButton.addEventListener('click', () => {
+      const model = models[currentIndex];
       if (isIOS) {
-        // iOS uses Quick Look
-        window.location.href = "https://huggingface.co/datasets/soumbhat/Demo_furniture/resolve/main/texture_mesh_c59b717cae6ac53f_shaded%20(1).usdz";
+        window.location.href = model.usdz;
       } else {
-        // Android uses Scene Viewer
-        const modelUrl = encodeURIComponent('https://raw.githubusercontent.com/soumbhat/somemodels/main/texture_mesh_c59b717cae6ac53f_shaded.glb');
-        const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${modelUrl}&mode=ar_preferred#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https%3A%2F%2Fmodelviewer.dev%2F;end;`;
+        const encoded = encodeURIComponent(model.glb);
+        const intentUrl = `intent://arvr.google.com/scene-viewer/1.0?file=${encoded}&mode=ar_preferred#Intent;scheme=https;package=com.google.ar.core;action=android.intent.action.VIEW;S.browser_fallback_url=https%3A%2F%2Fmodelviewer.dev%2F;end;`;
         window.location.href = intentUrl;
       }
     });
